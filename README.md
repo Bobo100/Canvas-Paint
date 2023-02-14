@@ -1,3 +1,3 @@
-# cra-template-boboReactTypeScript
+# Canvas-Paint
 
-存放個人的基礎設定檔案 (測試版)
+練習 製作一個線上版的小畫家
