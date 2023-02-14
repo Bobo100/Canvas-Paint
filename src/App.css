@@ -1,0 +1,28 @@
+.tool-list {
+  display: flex;
+}
+
+canvas {
+  border: 1px solid #000;
+}
+
+.flex {
+  display: flex;
+}
+
+.tool-sidelist {
+  display: flex;
+  flex-direction: column;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  margin: 15px;
+}
+
+.list_btn {
+  justify-content: center;
+}/*# sourceMappingURL=App.css.map */
