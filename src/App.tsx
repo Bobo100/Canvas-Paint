@@ -12,7 +12,7 @@ import { NotFoundPage } from './pages/Error';
 function App() {
   return (
     <div className="App">
-      <Router basename="/">
+      <Router basename="/Canvas-Paint">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFoundPage />}></Route>
