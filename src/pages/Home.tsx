@@ -10,8 +10,8 @@ export const Home = () => {
             <h1>親，小畫家上線啦</h1>
             <MousePosition />
             {/* <CanvasTest /> */}
-            {/* <CanvasTest2 /> */}
-            <CanvasTest3 />
+            <CanvasTest2 />
+            {/* <CanvasTest3 /> */}
         </div>
     );
 };
