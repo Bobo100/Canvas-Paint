@@ -21,7 +21,6 @@ export const CanvasTest2 = () => {
 
     // 紀錄使用者的最後一個動作
     const [lastAction, setLastAction] = useState("");
-    const [redoclaer, setRedoclaer] = useState("");
 
     console.log(lastAction)
 
@@ -75,27 +74,8 @@ export const CanvasTest2 = () => {
 
     // 上一步驟  返回
     const handleUndo = () => {
-        // 如果最後一個動作不是 clear，且 current 的陣列長度為 0，就不做任何事
-        if (lastAction !== "clear") {
-            if (propsCurrentRef.current.history.length === 0) return;
-            // 把最後一個畫的路徑放到 undo 的陣列中
-            propsUndoRef.current.history.push(propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1])
-            // 把最後一個畫的路徑從 undo 的陣列中移除
-            propsCurrentRef.current.history.pop();
 
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-
-            const context = canvas.getContext("2d");
-            if (!context) return;
-
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            propsCurrentRef.current.history.forEach((path, index) => {
-                context.strokeStyle = path.color;
-                context.lineWidth = path.rangeValue;
-                context.stroke(path.path);
-            });
-        } else if (lastAction === "clear") {
+        if (lastAction === "clear") {
             // 如果最後一個動作是 clear，就把 undo的陣列放到 current 的陣列中
             const canvas = canvasRef.current;
             if (!canvas) return;
@@ -114,20 +94,42 @@ export const CanvasTest2 = () => {
             });
 
         }
+        // 如果最後一個動作不是 clear，且 current 的陣列長度為 0，就不做任何事
+        else if (lastAction !== "clear") {
+            if (propsCurrentRef.current.history.length === 0) return;
+            // 把最後一個畫的路徑放到 undo 的陣列中
+            propsUndoRef.current.history.push(propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1])
+            // 把最後一個畫的路徑從 undo 的陣列中移除
+            propsCurrentRef.current.history.pop();
+
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+
+            const context = canvas.getContext("2d");
+            if (!context) return;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            propsCurrentRef.current.history.forEach((path, index) => {
+                context.strokeStyle = path.color;
+                context.lineWidth = path.rangeValue;
+                context.stroke(path.path);
+            });
+        }
         setLastAction(() => "undo");
+
     };
 
 
     // 下一步驟
+    // 如果有做過 undo，那麼你才能做 redo
     const handleRedo = () => {
+        // 如果最後一個動作是 clear，就不做任何事
         if (lastAction === "clear") {
             return;
-            // 上一個動作是畫畫
-        } else if (lastAction === "draw" && redoclaer === "clear") {
-            propsUndoRef.current.history = [];
-            setRedoclaer(() => "");
         }
-
+        else if (lastAction === "draw") {
+            propsUndoRef.current.history = [];
+        }
         // 如果沒有 undo，就不做任何事
         if (propsUndoRef.current.history.length === 0) return;
         // 把最後一個 undo 的路徑放到 redo 的陣列中
@@ -168,15 +170,13 @@ export const CanvasTest2 = () => {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         setLastAction(() => "clear");
-        setRedoclaer(() => "clear");
-
     }
 
 
     return (
         <div className="canvas-container">
             <div className="tool-list">
-                確認狀態：{lastAction} {redoclaer}
+                確認狀態：{lastAction}
                 <div className="list list_btn">
                     <button onClick={handleUndo}>返回</button>
                     <button onClick={handleRedo}>復原</button>
