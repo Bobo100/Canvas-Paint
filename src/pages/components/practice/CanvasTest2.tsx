@@ -168,6 +168,7 @@ export const CanvasTest2 = () => {
     return (
         <div className="canvas-container">
             <div className="tool-list">
+                確認狀態：{lastAction}
                 <div className="list list_btn">
                     <button onClick={handleUndo}>返回</button>
                     <button onClick={handleRedo}>復原</button>
