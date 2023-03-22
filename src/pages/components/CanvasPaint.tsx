@@ -22,6 +22,10 @@ export const CanvasTest2 = () => {
     // 紀錄使用者的最後一個動作
     const [lastAction, setLastAction] = useState("");
 
+
+    // 紀錄現在的工具
+    const [tool, setTool] = useState("brush");
+
     // console.log(lastAction)
 
     const startDrawing = (x: number, y: number) => {
@@ -60,7 +64,7 @@ export const CanvasTest2 = () => {
         context.strokeStyle = color;
         context.lineWidth = rangeValue;
         context.stroke(path);
-        context.lineCap = "round"; 
+        context.lineCap = "round";
 
         // 把之前的路徑畫出來
         propsCurrentRef.current.history.forEach((path, index) => {
@@ -181,7 +185,11 @@ export const CanvasTest2 = () => {
     return (
         <div className="canvas-container">
             <div className="tool-list">
-                確認狀態：{lastAction}
+                
+                <div className="list">
+                    確認狀態：{lastAction}
+                </div>
+
                 <div className="list list_btn">
                     <button onClick={handleUndo}>返回</button>
                     <button onClick={handleRedo}>復原</button>
@@ -198,6 +206,14 @@ export const CanvasTest2 = () => {
                     <label htmlFor="range">選擇粗細</label>
                     <input id="range" type="range" min="1" max="8" value={rangeValue} onChange={(e) => setRangeValue(parseInt(e.target.value))} />
                     <div>{rangeValue}</div>
+                </div>
+
+                <div className="list">
+                    {/* radio 選擇一個是筆刷 一個是畫框框 */}
+                    <label htmlFor="brush">筆刷</label>
+                    <input id="brush" type="radio" name="tool" value="brush" checked={tool === "brush"} onChange={(e) => setTool(e.target.value)} />
+                    <label htmlFor="rect">畫框框</label>
+                    <input id="rect" type="radio" name="tool" value="rect" checked={tool === "rect"} onChange={(e) => setTool(e.target.value)} />
                 </div>
             </div>
 
