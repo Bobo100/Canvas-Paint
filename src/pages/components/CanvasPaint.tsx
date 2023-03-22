@@ -6,6 +6,7 @@ interface Props2 {
         path: Path2D;
         color: string;
         rangeValue: number;
+        tool: string;
     }[]
 }
 
@@ -22,6 +23,10 @@ export const CanvasTest2 = () => {
     // 紀錄使用者的最後一個動作
     const [lastAction, setLastAction] = useState("");
 
+    // 紀錄使用者第一次點擊的位置
+    const [firstPos, setFirstPos] = useState({ x: 0, y: 0 });
+    // 紀錄移動最後一個點的位置
+    const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
 
     // 紀錄現在的工具
     const [tool, setTool] = useState("brush");
@@ -44,13 +49,14 @@ export const CanvasTest2 = () => {
             propsRedoRef.current.history = [];
         }
 
-        propsCurrentRef.current.history.push({ path, color, rangeValue });
+        if (tool === "brush")
+            propsCurrentRef.current.history.push({ path, color, rangeValue, tool });
         setLastAction(() => "draw");
-        // setLastPos({ x, y });
+        setFirstPos({ x, y });
     };
 
 
-    const draw = (x: number, y: number) => {
+    const draw = (x: number, y: number, mouse: number) => {
         if (!isDrawing) return;
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -58,19 +64,33 @@ export const CanvasTest2 = () => {
         if (!context) return;
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        const path = propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1].path;
-        // 移動到最後一個點
-        path.lineTo(x, y);
-        context.strokeStyle = color;
-        context.lineWidth = rangeValue;
-        context.stroke(path);
-        context.lineCap = "round";
+        console.log(mouse)
 
+        if (tool === "rect" && mouse === 1) { // 畫矩形
+            // const path = propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1].path;
+            context.beginPath();
+            context.strokeStyle = color;
+            context.lineWidth = rangeValue;
+            context.rect(firstPos.x, firstPos.y, x - firstPos.x, y - firstPos.y);            
+            context.stroke();
+            setLastPos({ x, y });
+        }
+        else if (tool === "brush") {
+            const path = propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1].path;
+            // 移動到最後一個點
+            path.lineTo(x, y);
+            context.strokeStyle = color;
+            context.lineWidth = rangeValue;
+            context.stroke(path);
+            context.lineCap = "round";
+        }
         // 把之前的路徑畫出來
         propsCurrentRef.current.history.forEach((path, index) => {
+
             context.strokeStyle = path.color;
             context.lineWidth = path.rangeValue;
             context.stroke(path.path);
+
         });
 
         setLastAction(() => "draw");
@@ -78,6 +98,12 @@ export const CanvasTest2 = () => {
 
 
     const handleMouseUp = () => {
+        if (tool === "rect") {
+            const path = new Path2D();
+            path.rect(firstPos.x, firstPos.y, lastPos.x - firstPos.x, lastPos.y - firstPos.y);
+            propsCurrentRef.current.history.push({ path, color, rangeValue, tool });
+        }
+
         setIsDrawing(false);
     };
 
@@ -185,7 +211,7 @@ export const CanvasTest2 = () => {
     return (
         <div className="canvas-container">
             <div className="tool-list">
-                
+
                 <div className="list">
                     確認狀態：{lastAction}
                 </div>
@@ -223,7 +249,7 @@ export const CanvasTest2 = () => {
                     width={800}
                     height={600}
                     onMouseDown={(e) => startDrawing(e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
-                    onMouseMove={(e) => draw(e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
+                    onMouseMove={(e) => draw(e.nativeEvent.offsetX, e.nativeEvent.offsetY, e.nativeEvent.buttons)}
                     onMouseUp={handleMouseUp}
                 />
 
