@@ -48,7 +48,13 @@ export const CanvasTest2 = () => {
         if (!isDrawing) return;
         const path = propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1].path;
 
-        path.lineTo(x, y);
+        // path.lineTo(x, y);
+
+        // const lastX = path[path.length - 1].x;
+        // const lastY = path[path.length - 1].y;
+        // const midX = (lastX + x) / 2;
+        // const midY = (lastY + y) / 2;
+        // path.quadraticCurveTo(lastX, lastY, midX, midY);
 
         const canvas = canvasRef.current;
         if (!canvas) return;
