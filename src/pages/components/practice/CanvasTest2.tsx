@@ -22,7 +22,7 @@ export const CanvasTest2 = () => {
     // 紀錄使用者的最後一個動作
     const [lastAction, setLastAction] = useState("");
 
-    console.log(lastAction)
+    // console.log(lastAction)
 
     const startDrawing = (x: number, y: number) => {
         const path = new Path2D();
