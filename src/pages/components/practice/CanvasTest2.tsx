@@ -42,37 +42,36 @@ export const CanvasTest2 = () => {
 
         propsCurrentRef.current.history.push({ path, color, rangeValue });
         setLastAction(() => "draw");
+        // setLastPos({ x, y });
     };
+
 
     const draw = (x: number, y: number) => {
         if (!isDrawing) return;
-        const path = propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1].path;
-
-        // path.lineTo(x, y);
-
-        // const lastX = path[path.length - 1].x;
-        // const lastY = path[path.length - 1].y;
-        // const midX = (lastX + x) / 2;
-        // const midY = (lastY + y) / 2;
-        // path.quadraticCurveTo(lastX, lastY, midX, midY);
-
         const canvas = canvasRef.current;
         if (!canvas) return;
-
         const context = canvas.getContext("2d");
         if (!context) return;
-
         context.clearRect(0, 0, canvas.width, canvas.height);
+
+        const path = propsCurrentRef.current.history[propsCurrentRef.current.history.length - 1].path;
+        // 移動到最後一個點
+        path.lineTo(x, y);
+        context.strokeStyle = color;
+        context.lineWidth = rangeValue;
+        context.stroke(path);
+        context.lineCap = "round"; 
+
+        // 把之前的路徑畫出來
         propsCurrentRef.current.history.forEach((path, index) => {
             context.strokeStyle = path.color;
             context.lineWidth = path.rangeValue;
             context.stroke(path.path);
         });
-        context.strokeStyle = color;
-        context.lineWidth = rangeValue;
-        context.stroke(path);
+
         setLastAction(() => "draw");
     };
+
 
     const handleMouseUp = () => {
         setIsDrawing(false);
@@ -197,7 +196,7 @@ export const CanvasTest2 = () => {
 
                 <div className="list">
                     <label htmlFor="range">選擇粗細</label>
-                    <input id="range" type="range" min="1" max="100" value={rangeValue} onChange={(e) => setRangeValue(parseInt(e.target.value))} />
+                    <input id="range" type="range" min="1" max="8" value={rangeValue} onChange={(e) => setRangeValue(parseInt(e.target.value))} />
                     <div>{rangeValue}</div>
                 </div>
             </div>
